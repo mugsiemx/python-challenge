@@ -4,34 +4,40 @@
 
 import os
 import csv
-# from itertools import islice
+# import datetime
 
 # get the financial data file
-cfile = os.path.join('C:', 'Users', 'eslar', 'python-challenge',
-                     'PyBank', 'Resources', 'budget_data.csv')
-with open('cfile') as file_obj:
+budget_file = os.path.join("..", "PyBank", "Resources", "budget_data.csv")
 
-    # Create reader object by passing the file
-    # object to reader method
-    reader_obj = csv.reader(file_obj)
+# define variables
+c = ": "  # used for a better view on screen
+analysis_hdr = ("Total Months", "Total Net Amount", "Average Change",
+                "Greatest Increase in Profits", "Greatest Decrease in Profits")
+total_rows = 0
+total_months_amount = 0
+total_avg_change = 0
+total_big_increase = 0
+total_big_decrease = 0
 
-    # Iterate over each row in the csv
-    # file using reader object
-    for row in reader_obj:
-        print(row)
+with open(budget_file, 'r') as budget_csv:
+    budget_rdr = csv.reader(budget_csv, delimiter=",")
+    budget_hdr = next(budget_rdr)   # skips the first/header row
+
+ #   total_rows_ck = (sum(1 for row in budget_rdr))
+ #   print(total_rows_ck)
+    for row in budget_rdr:
+        total_months_amount += int(row[1])
+    print(f"Total amount is: {total_months_amount}")
 
 
-# get the financial data file
-# cfile = os.path.join('C:', 'Users', 'eslar', 'python-challenge','PyBank', 'Resources', 'budget_data.csv')
+# total_avg_change == total_months_amount/total_rows_ck
+#
+# print(f"{total_months_amount} {total_avg_change}")
 
-# row_count = 0
-# read the financial data file
-# with open(cfile, encoding='utf') as rfile:
-#    firstNlines = rfile.readlines()[0:5]
-# print(firstNlines)
-# rfile = csv.reader(cfile, delimiter=',')
-
-# analyze the records to make calculations:
+# if int(row[1]) != 0:  # and row < total_rows_ck + 1:
+# total_months_amount == total_months_amount + int(row[1])
+#  if int(row[1]) == 382539:
+#    print(f"{total_months_amount}")
 
 
 # for row in budget_rdr to row[5]:
