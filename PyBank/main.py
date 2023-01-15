@@ -1,35 +1,42 @@
 # Python Challenge - PyBank
 
-# created on 1/7/2023 by Sheila LaRoue
+# Analyze a file with profit and loss (p&l) numbers for a number of consecutive months and years. Create a financial analysis to report the total months, total net p&l, total p&l variance from month to month, average p&l change, month and year and amount for the greatest increase and decrease in p&l. Display this information to the screen and output the information to a file.
 
+# created on 1/7/2023 by Sheila LaRoue
+# -------------------------------------------------------------------
+# import the necessary modules
 import os
 import csv
 
-# import datetime
+# the previous analysis file, delete for a fresh start
+# if os.path.exists("analysis_data.csv"):
+# try:
+#     os.remove("analysis_data.csv")
+# except OSError:   # on error, simply ignore
+#     print("Please close or delete the file: analysis_data.csv")
 
 # get the financial data file
 budget_file = os.path.join("", "Resources", "budget_data.csv")
+analysis_file = os.path.join("", "analysis", "analysis_data.csv")
 
 # define variables
-c = ": "  # used for a better view on screen
-analysis_hdr = ("Total Months", "Total Net Amount", "Total Variance Amount", "Average Change"
-                "Greatest Increase in Profits", "Greatest Decrease in Profits")
+analysis_hdr = ("Total Months", "Total Net Amount", "Total Variance Amount", "Average Change",
+                "Greatest Increase in Profits", "Greatest Decrease in Profits", "-", "Financial Analysis")
 mon_lst = []
 pl_lst = []
 pl_var_lst = []
 analysis_lst = []
+(   # initializing variables to a number zero
+    pl_tmp, min_idx, max_idx, min_value, max_value,
+    total_months,
+    total_months_amount,
+    total_variance_amount,
+    total_avg_change,
+) = (0, 0, 0, 0, 0, 0, 0, 0, 0)
+# big formatting variables after calcs are made
+total_big_increase = ""
+total_big_decrease = ""
 
-pl_tmp = 0
-min_idx = 0
-max_idx = 0
-min_value = 0
-max_value = 0
-total_months = 0
-total_months_amount = 0
-total_variance_amount = 0
-total_avg_change = 0
-# total_big_increase = f"{mon_lst} {[analysis_lst[min_idx]]}"
-# total_big_decrease = f"{mon_lst} {[analysis_lst[max_idx]]}"
 # open the .cvs file; begin defining and processing the data
 with open(budget_file, 'r') as budget_csv:
     budget_rdr = csv.reader(budget_csv, delimiter=",")
@@ -38,7 +45,7 @@ with open(budget_file, 'r') as budget_csv:
     # into lists:  add count number of months, add profit/loss variances
     for row in budget_rdr:
         mon_lst.append(row[0])
-        pl_var_lst.append(int(row[1]))
+        pl_lst.append(int(row[1]))
     # find the profit and loss variances, record them in the ProfitLoss Variance List
     i = 0
     j = 0
@@ -52,35 +59,53 @@ with open(budget_file, 'r') as budget_csv:
             pl_var_lst.append(int(pl_tmp))
         j += 1
 # match analysis values with the initial analysis header list defined in the variables
-    # The total number of months included in the dataset
+    # [01] The total number of months included in the dataset
     total_months = len(mon_lst)
     analysis_lst.append(total_months)
-    # The net total amount of "Profit/Losses" over the entire period
+    # [02] The net total amount of "Profit/Losses" over the entire period
     total_months_amount = sum(pl_lst)
     analysis_lst.append(total_months_amount)
-    # The changes in "Profit/Losses" over the entire period, and then the average of those changes
+    # [03] The changes in "Profit/Losses" over the entire period, and then the average of those changes
     total_variance_amount = sum(pl_var_lst)
     analysis_lst.append(total_variance_amount)
-    # average
-    total_avg_change = sum(pl_var_lst)/(len(mon_lst - 1))
+    # [04] average
+    total_avg_change = round((total_variance_amount/(total_months - 1)), 2)
     analysis_lst.append(total_avg_change)
-    # check for largest increase month to month p & l variance
+    # [06] check for largest p & l variance increase month to month
     max_value = max(pl_var_lst)
-    analysis_lst[4] = pl_var_lst.index(max_value)
-    # check for largest decrease month to month p & l variance
+    max_idx = pl_var_lst.index(max(pl_var_lst))
+    total_big_increase = f"{mon_lst[max_idx]} $({pl_var_lst[max_idx]})"
+    analysis_lst.append(total_big_increase)
+    # [07] check for largest p & l variance decrease month to month
     min_value = min(pl_var_lst)
-    analysis_lst[5] = pl_var_lst.index(min_value)
+    min_idx = pl_var_lst.index(min(pl_var_lst))
+    total_big_decrease = f"{mon_lst[min_idx]} $({pl_var_lst[min_idx]})"
+    analysis_lst.append(total_big_decrease)
 
-print(f"MONTHS {mon_lst}")
-print(f"BASIC {pl_lst}")
-print(f"CALCULATIONS {analysis_lst}")
-print(f"SINGLE {total_months}")
-print(f"SINGLE {total_months_amount}")
-print(f"SINGLE {total_avg_change}")
-print(f"SINGLE {total_big_increase}")
-print(f"SINGLE {total_big_decrease}")
+# on screen header
+print("\n" * 5)
+print(f"{analysis_hdr[-2]}" * 30)
+print(f"{analysis_hdr[-1]}")
+print(f"{analysis_hdr[-2]}" * 30)
+# on screen detail
+print(f"{analysis_hdr[0]}: {analysis_lst[0]}")
+print(f"{analysis_hdr[1]}: ${analysis_lst[1]}")
+print(f"{analysis_hdr[2]}: ${analysis_lst[2]}")
+print(f"{analysis_hdr[3]}: ${analysis_lst[3]}")
+print(f"{analysis_hdr[4]}: {total_big_increase}")
+print(f"{analysis_hdr[5]}: {total_big_decrease}")
+# on screen footer
+print(f"{analysis_hdr[-2]}" * 30)
+print("\n" * 5)
 
-
-# The greatest increase in profits (date and amount) over the entire period
-# The greatest decrease in profits (date and amount) over the entire period
-#
+# ready to output the data; initialize the output file
+with open(analysis_file, 'w') as analysis_csv:
+    # try:
+    #     os.remove("analysis_data.csv")
+    # except OSError:   # on error, simply ignore
+    #     print("Please close or delete the file: analysis_data.csv")
+    analysis_wtr = csv.writer(analysis_csv, delimiter=",")
+    # write the first/header row
+    analysis_wtr.writerow(analysis_hdr[0:6])
+    # write the second row of data
+    analysis_wtr.writerow(analysis_lst)
