@@ -2,37 +2,33 @@
 
 # Analyze a file with profit and loss (p&l) numbers for a number of consecutive months and years. Create a financial analysis to report the total months, total net p&l, total p&l variance from month to month, average p&l change, month and year and amount for the greatest increase and decrease in p&l. Display this information to the screen and output the information to a file.
 
-# created on 1/7/2023 by Sheila LaRoue
-# -------------------------------------------------------------------
-# import the necessary modules
+# created on 1/15/2023 by Sheila LaRoue
+# ----------------
+# import required  modules
 import os
 import csv
 
-# the previous analysis file, delete for a fresh start
-# if os.path.exists("analysis_data.csv"):
-# try:
-#     os.remove("analysis_data.csv")
-# except OSError:   # on error, simply ignore
-#     print("Please close or delete the file: analysis_data.csv")
-
-# get the financial data file
+# get the financial data file, and open a new write file
 budget_file = os.path.join("", "Resources", "budget_data.csv")
 analysis_file = os.path.join("", "analysis", "analysis_data.csv")
 
-# define variables
+# define list variable
 analysis_hdr = ("Total Months", "Total Net Amount", "Total Variance Amount", "Average Change",
                 "Greatest Increase in Profits", "Greatest Decrease in Profits", "-", "Financial Analysis")
 mon_lst = []
 pl_lst = []
 pl_var_lst = []
 analysis_lst = []
-(   # initializing variables to a number zero
+
+# define and initialize variables to a number zero
+(
     pl_tmp, min_idx, max_idx, min_value, max_value,
     total_months,
     total_months_amount,
     total_variance_amount,
     total_avg_change,
 ) = (0, 0, 0, 0, 0, 0, 0, 0, 0)
+
 # big formatting variables after calcs are made
 total_big_increase = ""
 total_big_decrease = ""
@@ -74,16 +70,18 @@ with open(budget_file, 'r') as budget_csv:
     # [06] check for largest p & l variance increase month to month
     max_value = max(pl_var_lst)
     max_idx = pl_var_lst.index(max(pl_var_lst))
-    total_big_increase = f"{mon_lst[max_idx]} $({pl_var_lst[max_idx]})"
+    # account for list index difference
+    total_big_increase = f"{mon_lst[max_idx - 1]} $({pl_var_lst[max_idx]})"
     analysis_lst.append(total_big_increase)
     # [07] check for largest p & l variance decrease month to month
     min_value = min(pl_var_lst)
     min_idx = pl_var_lst.index(min(pl_var_lst))
-    total_big_decrease = f"{mon_lst[min_idx]} $({pl_var_lst[min_idx]})"
+    # account for list index difference
+    total_big_decrease = f"{mon_lst[min_idx - 1]} $({pl_var_lst[min_idx]})"
     analysis_lst.append(total_big_decrease)
 
 # on screen header
-print("\n" * 5)
+print("\n" * 3)
 print(f"{analysis_hdr[-2]}" * 30)
 print(f"{analysis_hdr[-1]}")
 print(f"{analysis_hdr[-2]}" * 30)
@@ -96,16 +94,11 @@ print(f"{analysis_hdr[4]}: {total_big_increase}")
 print(f"{analysis_hdr[5]}: {total_big_decrease}")
 # on screen footer
 print(f"{analysis_hdr[-2]}" * 30)
-print("\n" * 5)
+print("\n" * 3)
 
 # ready to output the data; initialize the output file
 with open(analysis_file, 'w') as analysis_csv:
-    # try:
-    #     os.remove("analysis_data.csv")
-    # except OSError:   # on error, simply ignore
-    #     print("Please close or delete the file: analysis_data.csv")
     analysis_wtr = csv.writer(analysis_csv, delimiter=",")
-    # write the first/header row
-    analysis_wtr.writerow(analysis_hdr[0:6])
-    # write the second row of data
-    analysis_wtr.writerow(analysis_lst)
+    # write two rows
+    analysis_wtr.writerow(analysis_hdr[0:6])    # write the first/header row
+    analysis_wtr.writerow(analysis_lst)         # write the second row of data
