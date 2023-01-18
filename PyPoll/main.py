@@ -42,19 +42,9 @@ def vote_count(candidate):
     summary_lst.append(summary_dtl)
     return candidate_votes, votes_lst, votes_pct, summary_lst
 
-
-# def votes_win(votes_lst):
-
-    #  max_idx = votes_lst.index(max(votes_lst))
-
-    #     max_votes = max(votes_lst)
-    #     idx_max = votes_lst(max_votes)
-    #     winner = election_lst[idx_max]
-    #     return winner
-
     # get the election data file and create the analysis file to write data
 election_file = os.path.join('', 'Resources', 'election_data.csv')
-analysis_file = os.path.join('', 'analysis', 'analysis_data.csv')
+analysis_file = os.path.join('', 'analysis', 'analysis_data.txt')
 
 # read the election data file
 with open(election_file, 'r') as election_csv:
@@ -80,7 +70,6 @@ max_pct = max(votes_pct)
 max_idx = votes_pct.index(max(votes_pct))
 winner = election_lst[max_idx]
 
-
 # on screen header
 print('\n' * 3)
 print(f'-' * 30)
@@ -97,3 +86,25 @@ print(f'Winner: {winner}')
 # on screen footer
 print(f"-" * 30)
 print("\n" * 3)
+
+# print results to a text file
+with open(analysis_file, 'w') as analysis_txt:
+    analysis_txt.write(f'Election Results')
+    analysis_txt.write('\n')
+    analysis_txt.write(f'-' * 30)
+    analysis_txt.write('\n')
+    analysis_txt.write(f'Total Votes: {total_votes}')
+    analysis_txt.write('\n')
+    analysis_txt.write(f'-' * 30)
+    analysis_txt.write('\n')
+
+    i = 0
+    for i in range(len(summary_lst)):
+        analysis_txt.write(summary_lst[i])
+        analysis_txt.write('\n')
+
+    analysis_txt.write(f"-" * 30)
+    analysis_txt.write('\n')
+    analysis_txt.write(f'Winner: {winner}')
+    analysis_txt.write('\n')
+    analysis_txt.write(f"-" * 30)
