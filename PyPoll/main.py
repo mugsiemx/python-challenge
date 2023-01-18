@@ -7,26 +7,52 @@ import csv
 
 candidate_lst = []
 election_lst = []
-votes_lst = [0, 0, 0]
+votes_lst = []
+votes_pct = []
+summary_lst = []
 
-candidate_pct = 0
+candidate_pct = 0.0
 candidate_votes = 0
+max_votes = 0
 total_votes = 0
 idx = 0
+max_idx = 0
+max_value = 0
+tmp_value = 0
 
-election_summary = ''
 candidate = ''
+summary_dtl = ''
+election_summary = ''
+winner = ''
 
 # function to count the number of votes based on one vote per ballot
 
 
 def vote_count(candidate):
+    # total of individual candidate's votes
     candidate_votes = candidate_lst.count(candidate)
-    votes_lst[idx] = candidate_votes
-    return candidate_votes, votes_lst[idx]
+
+    votes_lst.append(str(candidate_votes))
+    # percentage of the total vote the candidate received
+    candidate_pct = round(float((candidate_votes/total_votes)*100), 3)
+    votes_pct.append(candidate_pct)
+
+    summary_dtl = str(candidate) + ': ' + str(candidate_pct) + \
+        '% ' + '(' + str(candidate_votes) + ')'
+    summary_lst.append(summary_dtl)
+    return candidate_votes, votes_lst, votes_pct, summary_lst
 
 
-# get the election data file and create the analysis file to write data
+# def votes_win(votes_lst):
+
+    #  max_idx = votes_lst.index(max(votes_lst))
+
+    #     max_votes = max(votes_lst)
+    #     idx_max = votes_lst(max_votes)
+    #     winner = election_lst[idx_max]
+    #     return winner
+
+    # get the election data file and create the analysis file to write data
 election_file = os.path.join('', 'Resources', 'election_data.csv')
 analysis_file = os.path.join('', 'analysis', 'analysis_data.csv')
 
@@ -46,10 +72,13 @@ with open(election_file, 'r') as election_csv:
             election_lst.append(name)
     # using a function, calculate the number of votes received per candidate
     for candidate in election_lst:
-       # candidate_votes = 0
         idx = int(election_lst.index(candidate))
         if candidate in candidate_lst:
             vote_count(candidate)
+   # max_value = votes_lst[0]
+max_pct = max(votes_pct)
+max_idx = votes_pct.index(max(votes_pct))
+winner = election_lst[max_idx]
 
 
 # on screen header
@@ -59,15 +88,12 @@ print(f'Election Results')
 print(f'-' * 30)
 print(f'Total Votes: {total_votes}')
 print(f'-' * 30)
-# on screen detail
-idx = 0
-for idx in range(len(election_lst[idx])):
-    candidate_pct = int(votes_lst[idx])/{total_votes} * 100
-    election_summary = (
-        f"{election_lst[idx]}: {candidate_pct}% '('{votes_lst[idx]}')'"
-    )
-    idx += 1
-print(election_summary)
+# on screen candidate detail
+print(*summary_lst, sep='\n')
+print(f"-" * 30)
+# on screen print the winning candidate
+winner = election_lst[max_idx]
+print(f'Winner: {winner}')
 # on screen footer
 print(f"-" * 30)
 print("\n" * 3)
