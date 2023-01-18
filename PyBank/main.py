@@ -3,8 +3,9 @@
 # Analyze a file with profit and loss (p&l) numbers for a number of consecutive months and years. Create a financial analysis to report the total months, total net p&l, total p&l variance from month to month, average p&l change, month and year and amount for the greatest increase and decrease in p&l. Display this information to the screen and output the information to a file.
 
 # created on 1/15/2023 by Sheila LaRoue
+
 # ----------------
-# import required  modules
+# import required modules
 import os
 import csv
 
@@ -12,7 +13,7 @@ import csv
 budget_file = os.path.join("", "Resources", "budget_data.csv")
 analysis_file = os.path.join("", "analysis", "analysis_data.csv")
 
-# define list variable
+# define list variables
 analysis_hdr = ("Total Months", "Total Net Amount", "Total Variance Amount", "Average Change",
                 "Greatest Increase in Profits", "Greatest Decrease in Profits", "-", "Financial Analysis")
 mon_lst = []
@@ -33,6 +34,7 @@ analysis_lst = []
 total_big_increase = ""
 total_big_decrease = ""
 
+# ----------------
 # open the .cvs file; begin defining and processing the data
 with open(budget_file, 'r') as budget_csv:
     budget_rdr = csv.reader(budget_csv, delimiter=",")
@@ -71,15 +73,16 @@ with open(budget_file, 'r') as budget_csv:
     max_value = max(pl_var_lst)
     max_idx = pl_var_lst.index(max(pl_var_lst))
     # account for list index difference
-    total_big_increase = f"{mon_lst[max_idx - 1]} $({pl_var_lst[max_idx]})"
+    total_big_increase = f"{mon_lst[max_idx - 1]} (${pl_var_lst[max_idx]})"
     analysis_lst.append(total_big_increase)
     # [07] check for largest p & l variance decrease month to month
     min_value = min(pl_var_lst)
     min_idx = pl_var_lst.index(min(pl_var_lst))
     # account for list index difference
-    total_big_decrease = f"{mon_lst[min_idx - 1]} $({pl_var_lst[min_idx]})"
+    total_big_decrease = f"{mon_lst[min_idx - 1]} (${pl_var_lst[min_idx]})"
     analysis_lst.append(total_big_decrease)
 
+# ----------------
 # on screen header
 print("\n" * 3)
 print(f"{analysis_hdr[-2]}" * 30)
@@ -96,9 +99,11 @@ print(f"{analysis_hdr[5]}: {total_big_decrease}")
 print(f"{analysis_hdr[-2]}" * 30)
 print("\n" * 3)
 
-# ready to output the data; initialize the output file
-with open(analysis_file, 'w') as analysis_csv:
+# ----------------
+# output the data; initialize the output file
+with open(analysis_file, 'w', newline='') as analysis_csv:
     analysis_wtr = csv.writer(analysis_csv, delimiter=",")
     # write two rows
     analysis_wtr.writerow(analysis_hdr[0:6])    # write the first/header row
     analysis_wtr.writerow(analysis_lst)         # write the second row of data
+# ----------------
